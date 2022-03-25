@@ -2,6 +2,7 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
+import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles((theme) => ({
   main: { 
@@ -37,16 +38,16 @@ function Header({ classes }) {
                       <Paper className={classes.place}>Monterrey</Paper>
                   </Grid>
                   <Grid item xs={2} sm={1}>
-                      <Paper className={classes.paper}></Paper>
+                      <Paper className={classes.paper}><Button>Back</Button></Paper>
                   </Grid>
                   <Grid item xs={10} sm={5}>
-                      <Paper className={classes.paper}><img></img></Paper>
+                      <Paper className={classes.paper}></Paper>
                   </Grid>
                   <Grid item xs={10} sm={5}>
                       <Paper className={classes.paper}></Paper>
                   </Grid>
                   <Grid item xs={2} sm={1}>
-                      <Paper className={classes.paper}></Paper>
+                      <Paper className={classes.paper}><Button>Next</Button></Paper>
                   </Grid>
               </Grid>
         </div>
