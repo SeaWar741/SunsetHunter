@@ -1,0 +1,55 @@
+Insert
+- - Crear un nuevo usuario
+    db.users.insertOne({
+        id: "102428655344025591848",
+        name: "Erik Js.",
+        email: "yoshikirej@gmail.com",
+        sites: []
+    })
+
+Update
+- - Actualizar los sites de un usuario
+    db.users.updateOne({ id: "102428655344025591848"}, { $pop: {sites : -1}})
+
+
+    Actualizar un elemento específico de un array SIN PROBAAR
+    db.users.update({ 
+        id: "102428655344025591848" 
+        },
+            { 
+            "$set": { 'documents.'+str(0)+'.content' : 
+            }
+        }
+    )
+
+    db.users.updateOne( { id: "102428655344025591848" }, { $push: { sites: { "name": "Monterrey", "sunrise": "06:23 AM" } } } )
+
+    Agregar una ciudad
+    db.users.updateOne( { id: "102428655344025591848" }, 
+        { $push: { 
+            sites: { 
+                name: "Monterrey", 
+                last_days: [ 
+                    { 
+                        date: "04/02/2022",
+                        weather: "Cloudy",
+                        sunrise_time: "06:23 AM",
+                        sunrise_quality: "53%",
+                        sunset_time: "18:15 PM",
+                        sunset_quality: "42%"
+                    },
+                    {
+                        date: "05/02/2022",
+                        weather: "Sunny",
+                        sunrise: "06:23 AM",
+                        sunrise_quality: "72%",
+                        sunset: "18:15 PM",
+                        sunset_quality: "32%"
+                    } ] 
+                }
+            }
+        }
+    )
+    
+    Agregar una ciudad
+    db.users.updateOne( { id: "102428655344025591848" }, { $push: { sites: { name: "Monterrey", last_days: [ { weather: "Cloudy", sunrise: "06:23 AM", sunset: "18:15 PM" } ] } } } )
