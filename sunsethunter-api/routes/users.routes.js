@@ -2,16 +2,18 @@ const { Router } = require('express');
 const { 
     addSite,
     getSites,
-    getSite
+    getSite,
+    removeSite
 } = require('../controllers/users.controller');
 
 const router = Router();
 
 router.post('/add_site', addSite);
 
-router.get('/get_sites', getSites);
+router.post('/get_sites', getSites);
 
-router.get('/get_site', getSite);
+router.post('/get_site', getSite);
+router.post('/remove_site', removeSite);
 
 
 module.exports = router;

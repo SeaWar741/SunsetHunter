@@ -1,51 +1,51 @@
-import React from "react";
+import React, {useState} from "react";
+
+import HeaderHome from "./header";
+import BodyContent from "./body";
 
 import { makeStyles } from "@material-ui/core/styles";
-import Header from "./header";
-import Body from "./body";
+
+import { Layout } from 'antd';
+
+const { Header, Footer, Sider, Content } = Layout;
+
+
 
 const useStyles = makeStyles((theme) => ({
-    parent: {
-        display: "grid",
-        gridTemplateColumns: "repeat(8, 1fr)",
-        gridTemplateRows: "repeat(9, 1fr)",
-        gridColumnGap: "0px",
-        gridRowGap: "0px",
-        minHeight: "100vh",
-        backgroundColor: "#f5f5f5",
-    },
     header: {
-        gridArea: "1 / 1 / 2 / 9", 
+        backgroundColor:"black",
     },
-    searchBar: {
-        gridArea: "2 / 1 / 3 / 5", 
-    },
-    searchBar2: {
-        gridArea: "2 / 5 / 3 / 9", 
-    },
-    main: {
-        gridArea: "3 / 1 / 10 / 9", 
+    content:{
+        background: "linear-gradient(232.27deg, #6785F1 11.75%, #F1BA67 94.14%)",
+        padding: "3rem",
+        minHeight: 'calc(100vh - 50px)',
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center'
     }
+
+
 }));
 
 const Home =({classes}) =>{
+    const [user, setUser] = useState({});
+    
+
     classes = useStyles();
+
+
 
     return (
         <>
-            <div className={classes.parent}>
-                <div className={classes.header}>
-                    <Header />
-                </div>  
-                <div className={classes.searchBar}>
-                    Search
-                </div>  
-                <div className={classes.searchBar2}>
-                    
-                </div> 
-                <div className={classes.main}>
-                    <Body />
-                </div>  
+            <div>
+                <Layout>
+                    <Header className={classes.header}>
+                        <HeaderHome user={user} setUser={setUser}/>
+                    </Header>
+                    <Content className={classes.content}>
+                        <BodyContent user={user} setUser={setUser}/>
+                    </Content>
+                </Layout>
             </div>
         </>
   );

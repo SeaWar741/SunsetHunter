@@ -26,7 +26,7 @@ class Server {
         this.app.use( express.json() );
 
         // Autentificación con Google
-        this.app.use( require('../models/auth'));
+        //this.app.use( require('../models/auth'));
         
         // "Use" se utiliza para los middlewares
         // Directorio público

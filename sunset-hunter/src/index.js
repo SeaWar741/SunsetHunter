@@ -5,6 +5,9 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 
+import 'antd/dist/antd.css';
+
+
 ReactDOM.render(
   <React.StrictMode>
     <App />

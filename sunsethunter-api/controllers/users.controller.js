@@ -108,6 +108,7 @@ module.exports = {
 
 		const key = process.env.KEY;
 		let info = [];
+		let promises = [];
 		
 
 		if (user) {
@@ -118,74 +119,72 @@ module.exports = {
 				url_site = removeDiacritics(url_site);
 				
 				let url = `http://api.weatherapi.com/v1/forecast.json?key=${key}&q=${url_site}&days=5&aqi=yes&alerts=no`;
-				 
-				axios.get(url).then( resp => {
+				
+				promises.push( 
+					axios.get(url).then( resp => {
 
-					// We calculate if it is a good sunrise
-					let currentDaySunrise = calculateSunsetSunriseQuality(
-						resp.data.forecast.forecastday[0].hour[6].cloud,
-						resp.data.forecast.forecastday[0].hour[6].temp_c,
-						resp.data.current.air_quality["us-epa-index"],
-						resp.data.forecast.forecastday[0].hour[6].humidity,
-						resp.data.forecast.forecastday[0].hour[6].wind_kph,
-						resp.data.forecast.forecastday[0].hour[6].precip_mm,
-						resp.data.current.vis_km
-					);
+						// We calculate if it is a good sunrise
+						let currentDaySunrise = calculateSunsetSunriseQuality(
+							resp.data.forecast.forecastday[0].hour[6].cloud,
+							resp.data.forecast.forecastday[0].hour[6].temp_c,
+							resp.data.current.air_quality["us-epa-index"],
+							resp.data.forecast.forecastday[0].hour[6].humidity,
+							resp.data.forecast.forecastday[0].hour[6].wind_kph,
+							resp.data.forecast.forecastday[0].hour[6].precip_mm,
+							resp.data.current.vis_km
+						);
 
-					// We calculate if it is a good sunset
-					let currentDaySunset = calculateSunsetSunriseQuality(
-						resp.data.forecast.forecastday[0].hour[18].cloud,
-						resp.data.forecast.forecastday[0].hour[18].temp_c,
-						resp.data.current.air_quality["us-epa-index"],
-						resp.data.forecast.forecastday[0].hour[18].humidity,
-						resp.data.forecast.forecastday[0].hour[18].wind_kph,
-						resp.data.forecast.forecastday[0].hour[18].precip_mm,
-						resp.data.current.vis_km
-					);
+						// We calculate if it is a good sunset
+						let currentDaySunset = calculateSunsetSunriseQuality(
+							resp.data.forecast.forecastday[0].hour[18].cloud,
+							resp.data.forecast.forecastday[0].hour[18].temp_c,
+							resp.data.current.air_quality["us-epa-index"],
+							resp.data.forecast.forecastday[0].hour[18].humidity,
+							resp.data.forecast.forecastday[0].hour[18].wind_kph,
+							resp.data.forecast.forecastday[0].hour[18].precip_mm,
+							resp.data.current.vis_km
+						);
 
-					let site_info = {
-						name: site,
-						last_days: [
-							{
-								date: resp.data.forecast.forecastday[0].date,
-								sunrise: resp.data.forecast.forecastday[0].astro.sunrise,
-								sunrise_temp: resp.data.forecast.forecastday[0].hour[6].temp_c,
-								good_sunrise: currentDaySunrise,
-								sunset: resp.data.forecast.forecastday[0].astro.sunset,
-								sunset_temp: resp.data.forecast.forecastday[0].hour[18].temp_c,
-								good_sunset: currentDaySunset
-							},
-							{
-								date: resp.data.forecast.forecastday[1].date,
-								sunrise: resp.data.forecast.forecastday[1].astro.sunrise,
-								sunrise_temp: resp.data.forecast.forecastday[1].hour[6].temp_c,
-								sunset: resp.data.forecast.forecastday[1].astro.sunset,
-								sunset_temp: resp.data.forecast.forecastday[1].hour[18].temp_c,
-							},
-							{
-								date: resp.data.forecast.forecastday[2].date,
-								sunrise: resp.data.forecast.forecastday[2].astro.sunrise,
-								sunrise_temp: resp.data.forecast.forecastday[2].hour[6].temp_c,
-								sunset: resp.data.forecast.forecastday[2].astro.sunset,
-								sunset_temp: resp.data.forecast.forecastday[2].hour[18].temp_c,
-							}
-						]
-					};
+						let site_info = {
+							name: site,
+							last_days: [
+								{
+									date: resp.data.forecast.forecastday[0].date,
+									sunrise: resp.data.forecast.forecastday[0].astro.sunrise,
+									sunrise_temp: resp.data.forecast.forecastday[0].hour[6].temp_c,
+									good_sunrise: currentDaySunrise,
+									sunset: resp.data.forecast.forecastday[0].astro.sunset,
+									sunset_temp: resp.data.forecast.forecastday[0].hour[18].temp_c,
+									good_sunset: currentDaySunset
+								},
+								{
+									date: resp.data.forecast.forecastday[1].date,
+									sunrise: resp.data.forecast.forecastday[1].astro.sunrise,
+									sunrise_temp: resp.data.forecast.forecastday[1].hour[6].temp_c,
+									sunset: resp.data.forecast.forecastday[1].astro.sunset,
+									sunset_temp: resp.data.forecast.forecastday[1].hour[18].temp_c,
+								},
+								{
+									date: resp.data.forecast.forecastday[2].date,
+									sunrise: resp.data.forecast.forecastday[2].astro.sunrise,
+									sunrise_temp: resp.data.forecast.forecastday[2].hour[6].temp_c,
+									sunset: resp.data.forecast.forecastday[2].astro.sunset,
+									sunset_temp: resp.data.forecast.forecastday[2].hour[18].temp_c,
+								}
+							]
+						};
 
-					// console.log(site_info);
-					info.push(site_info);
-					console.log(info);
-				})
-				.catch( err => {
-					console.log(err);
-					
-				})
-
+						
+						info.push(site_info);
+						
+					})
+					.catch( err => {
+						console.log(err);
+						res.status(400).send("Error al momento de obtener la ciudades");
+					})
+				)
 			});
-			console.log(info);
-		
-			res.status(200).json(info);
-			
+			Promise.all(promises).then(() => res.status(200).json(info));
 		}
 		
 	},
@@ -256,10 +255,11 @@ module.exports = {
 		})
 		.catch( err => {
 			console.log(err);
+			res.status(400).send("Error al obtener la ciudad");
 		});
 
 	}
 
 
 
-}3
+}

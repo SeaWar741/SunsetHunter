@@ -1,37 +1,114 @@
-import React from "react";
+import React, {useState,useEffect} from "react";
 import { makeStyles } from "@material-ui/core/styles";
+import {GoogleLogin,GoogleLogout } from 'react-google-login';
 
-import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
+import { Row, Col,Typography,Button, Radio  } from 'antd';
+import { UserOutlined} from '@ant-design/icons';
+
+
+const { Title } = Typography;
 
 
 const useStyles = makeStyles((theme) => ({
-  main: { 
-    background: "rgba( 255, 255, 255, 0.25 )",
-    boxShadow: "0 8px 32px 0 rgba( 31, 38, 135, 0.37 )",
-    backdropFilter: "blur( 7.5px )",
-    webkitBackdropFilter: "blur( 7.5px )",
-    border: "1px solid rgba( 255, 255, 255, 0.18 )",
+  main:{
+    color:"white",
+    height: "50px"
+  },
+  title: {
+    fontWeight: "bold !important",
+  },
+  login: {
+    textAlign: "right",
   }
 }));
 
-function Header({ classes }) {
+function HeaderHome({ classes, user, setUser }) {
   classes = useStyles();
 
+  const responseGoogle = (response) => {
+    console.log(response);
+    
+    var userData = {
+      id: response.googleId,
+      name: response.profileObj.name,
+      email: response.profileObj.email
+    }
+
+    localStorage.setItem("userData", JSON.stringify(userData));
+    setUser(userData);
+
+  }
+
+
+  const clearUser = () => {
+    setUser(undefined);
+    localStorage.removeItem("userData");
+  }
+
+  //use effect to check if user is in local storage
+  useEffect(() => {
+    if (localStorage.getItem("userData")) {
+      setUser(JSON.parse(localStorage.getItem("userData")));
+    }
+    else{
+      setUser(undefined);
+    }
+  }, []);
+
+  console.log(user)
+
+  
+
   return (
-    <div>
+    <>
         <div className={classes.main} >
-            <Grid container spacing={3}>
-                <Grid item xs={6}>
-                    SunsetHunter 
-                </Grid>
-                <Grid item xs={8}>
-                    {/* */}
-                </Grid>
-            </Grid>
+          <Row>
+            <Col span={12} className={classes.title}>
+              <Title strong style={{color: "white"}}>Sunset Hunter</Title>
+            </Col>
+            <Col span={12} className={classes.login}>
+              <div>
+                {(user !== undefined) ?
+                (<div>
+                  <GoogleLogout
+                    clientId="166218651520-di29914j576s0v6fe1a96j7510vo4sra.apps.googleusercontent.com"
+                    buttonText="Logout"
+                    onLogoutSuccess={() => clearUser()}
+                    render={renderProps => (
+                      <Button type="primary" shape="round" icon={<UserOutlined/>} size={"large"} onClick={renderProps.onClick} disabled={renderProps.disabled}>
+                        Logout
+                      </Button>
+                    )}
+                  >
+                  </GoogleLogout>
+                </div>
+                ) : 
+                (<div>
+                  <GoogleLogin
+                    clientId={"166218651520-di29914j576s0v6fe1a96j7510vo4sra.apps.googleusercontent.com"}
+                    buttonText="Login"
+                    onSuccess={responseGoogle}
+                    onFailure={responseGoogle}
+                    cookiePolicy={'single_host_origin'}
+                    icon={false}
+                    render={renderProps => (
+                      <Button type="primary" shape="round" icon={<UserOutlined/>} size={"large"} onClick={renderProps.onClick} disabled={renderProps.disabled}>
+                        Login
+                      </Button>
+                    )}
+
+                  >
+                  </GoogleLogin>
+                </div>)
+                  
+                }
+                
+              </div>
+            </Col>
+          </Row>
         </div>
-    </div>
+    </>
   );
 }
 
-export default Header;
+export default HeaderHome;
